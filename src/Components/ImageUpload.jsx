@@ -17,6 +17,7 @@ function ImageUpload() {
   const [backImage, setBackImage] = useState(null);
   const [frontImagePreview, setFrontImagePreview] = useState(null);
   const [backImagePreview, setBackImagePreview] = useState(null);
+  const [loading, setLoading] = useState(null)
   const [textData, setTextData] = useState(null);
 
   const handleFrontImage = (e) => {
@@ -51,8 +52,10 @@ function ImageUpload() {
 
   const handleOCR = async (e) => {
     try {
+      setLoading(true);
       if (!frontImage || !backImage) {
         toast.error("Please upload both Aadhaar front and back images.");
+        setLoading(false);
         return;
       }
 
@@ -65,6 +68,7 @@ function ImageUpload() {
       toast.error(
         "Invalid file type. Please select a PNG, JPEG, or JPG image."
       );
+      setLoading(false);
       return;
     }
       const formData = new FormData();
@@ -85,7 +89,8 @@ function ImageUpload() {
       if (response?.status === 201) {
         const data = response?.data?.data;
         setTextData(data);
-        toast.success("Aadhaar Parsed Successfully");
+        setLoading(false)
+        toast.success("Aadhaar Parsed successfully");
       } else {
         toast.error(" Aadhaar Parsed failed");
       }
@@ -192,11 +197,12 @@ function ImageUpload() {
                 <Button
                   type="submit"
                   fullWidth
+                  disabled={loading}
                   variant="contained"
                   onClick={handleOCR}
                   sx={{ mt: 3, mb: 2, background: "primary" }}
                 >
-                  PARSE AADHAAR
+                  {loading ? "loading" : "PARSE AADHAAR"}
                 </Button>
               </Box>
             </Grid>
